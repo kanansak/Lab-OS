@@ -106,52 +106,67 @@ func command_expire() {
 	if p == "" {
 		return
 	}
+	insertQueue(ready, p)
 	if cpu1 == "" {
 		cpu1 = p
 	} else if cpu2 == "" {
 		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
+	} // else {
+	//insertQueue(ready, p)
+	//}
 }
 
-func command_io1() {
+func command_io1_c1() {
 	if cpu1 != "" {
 		insertQueue(io1, cpu1)
 		cpu1 = ""
-	} else if cpu2 != "" {
+	}
+	command_expire()
+}
+func command_io1_c2() {
+	if cpu2 != "" {
 		insertQueue(io1, cpu2)
 		cpu2 = ""
 	}
 	command_expire()
 }
-
-func command_io2() {
+func command_io2_c1() {
 	if cpu1 != "" {
 		insertQueue(io2, cpu1)
 		cpu1 = ""
-	} else if cpu2 != "" {
+	}
+	command_expire()
+}
+func command_io2_c2() {
+	if cpu2 != "" {
 		insertQueue(io2, cpu2)
 		cpu2 = ""
 	}
 	command_expire()
 }
-func command_io3() {
+func command_io3_c1() {
 	if cpu1 != "" {
 		insertQueue(io3, cpu1)
 		cpu1 = ""
-	} else if cpu2 != "" {
+	}
+	command_expire()
+}
+func command_io3_c2() {
+	if cpu2 != "" {
 		insertQueue(io3, cpu2)
 		cpu2 = ""
 	}
 	command_expire()
 }
-
-func command_io4() {
+func command_io4_c1() {
 	if cpu1 != "" {
 		insertQueue(io4, cpu1)
 		cpu1 = ""
-	} else if cpu2 != "" {
+	}
+	command_expire()
+}
+func command_io4_c2() {
+	if cpu2 != "" {
 		insertQueue(io4, cpu2)
 		cpu2 = ""
 	}
@@ -252,14 +267,22 @@ func main() {
 			command_terminate()
 		case "expire":
 			command_expire()
-		case "io1":
-			command_io1()
-		case "io2":
-			command_io2()
-		case "io3":
-			command_io3()
-		case "io4":
-			command_io4()
+		case "io11":
+			command_io1_c1()
+		case "io12":
+			command_io1_c2()
+		case "io21":
+			command_io2_c1()
+		case "io22":
+			command_io2_c2()
+		case "io31":
+			command_io3_c1()
+		case "io32":
+			command_io3_c2()
+		case "io41":
+			command_io4_c1()
+		case "io42":
+			command_io4_c2()
 		case "io1x":
 			command_io1x()
 		case "io2x":
