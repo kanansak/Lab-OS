@@ -93,23 +93,34 @@ func command_new(p string) {
 		insertQueue(ready, p)
 	}
 }
-func command_terminate() {
+func command_terminate_c1() {
 	if cpu1 != "" {
 		cpu1 = deleteQueue(ready)
-	} else if cpu2 != "" {
+	}
+}
+func command_terminate_c2() {
+	if cpu2 != "" {
 		cpu2 = deleteQueue(ready)
 	}
 }
 
-func command_expire() {
+func command_expire_c1() {
 	p := deleteQueue(ready)
 	if p == "" {
 		return
 	}
-
 	if cpu1 == "" {
 		cpu1 = p
-	} else if cpu2 == "" {
+	} else {
+		insertQueue(ready, p)
+	}
+}
+func command_expire_c2() {
+	p := deleteQueue(ready)
+	if p == "" {
+		return
+	}
+	if cpu2 == "" {
 		cpu2 = p
 	} else {
 		insertQueue(ready, p)
@@ -119,42 +130,42 @@ func command_expire() {
 func command_io1_c1() {
 	insertQueue(io1, cpu1)
 	cpu1 = ""
-	command_expire()
+	command_expire_c1()
 }
 func command_io1_c2() {
 	insertQueue(io1, cpu2)
 	cpu2 = ""
-	command_expire()
+	command_expire_c2()
 }
 func command_io2_c1() {
 	insertQueue(io2, cpu1)
 	cpu1 = ""
-	command_expire()
+	command_expire_c1()
 }
 func command_io2_c2() {
 	insertQueue(io2, cpu2)
 	cpu2 = ""
-	command_expire()
+	command_expire_c2()
 }
 func command_io3_c1() {
 	insertQueue(io3, cpu1)
 	cpu1 = ""
-	command_expire()
+	command_expire_c1()
 }
 func command_io3_c2() {
 	insertQueue(io3, cpu2)
 	cpu2 = ""
-	command_expire()
+	command_expire_c2()
 }
 func command_io4_c1() {
 	insertQueue(io4, cpu1)
 	cpu1 = ""
-	command_expire()
+	command_expire_c1()
 }
 func command_io4_c2() {
 	insertQueue(io4, cpu2)
 	cpu2 = ""
-	command_expire()
+	command_expire_c2()
 }
 func command_io1x() {
 	p := deleteQueue(io1)
@@ -247,10 +258,14 @@ func main() {
 				}
 				command_new(commandx[i])
 			}
-		case "terminate":
-			command_terminate()
-		case "expire":
-			command_expire()
+		case "terminate1":
+			command_terminate_c1()
+		case "terminate2":
+			command_terminate_c2()
+		case "expire1":
+			command_expire_c1()
+		case "expire2":
+			command_expire_c2()
 		case "io11":
 			command_io1_c1()
 		case "io12":
