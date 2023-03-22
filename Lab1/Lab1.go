@@ -33,48 +33,29 @@ func showProcess() {
 	fmt.Printf("CPU2   -> %s\n", cpu2)
 	fmt.Printf("Ready -> ")
 	for i := range ready {
-		if ready[i] != "" {
-			fmt.Printf("%s ", ready[i])
-		}
+		fmt.Printf("%s ", ready[i])
 	}
 	fmt.Printf("\n")
-	if len(io1) > 0 {
-		fmt.Printf("I/O 1 -> ")
-		for i := range io1 {
-			if io1[i] != "" {
-				fmt.Printf("%s ", io1[i])
-			}
-		}
+	fmt.Printf("I/O 1 -> ")
+	for i := range io1 {
+		fmt.Printf("%s ", io1[i])
 	}
 	fmt.Printf("\n")
-	if len(io2) > 0 {
-		fmt.Printf("I/O 2 -> ")
-		for i := range io2 {
-			if io2[i] != "" {
-				fmt.Printf("%s ", io2[i])
-			}
-		}
+	fmt.Printf("I/O 2 -> ")
+	for i := range io2 {
+		fmt.Printf("%s ", io2[i])
 	}
 	fmt.Printf("\n")
-	if len(io3) > 0 {
-		fmt.Printf("I/O 3 -> ")
-		for i := range io3 {
-			if io3[i] != "" {
-				fmt.Printf("%s ", io3[i])
-			}
-		}
+	fmt.Printf("I/O 3 -> ")
+	for i := range io3 {
+		fmt.Printf("%s ", io3[i])
 	}
 	fmt.Printf("\n")
-	if len(io4) > 0 {
-		fmt.Printf("I/O 4 -> ")
-		for i := range io4 {
-			if io4[i] != "" {
-				fmt.Printf("%s ", io4[i])
-			}
-		}
+	fmt.Printf("I/O 4 -> ")
+	for i := range io4 {
+		fmt.Printf("%s ", io4[i])
 	}
 	fmt.Printf("\n\nCommand > ")
-
 }
 
 func getCommand() string {
@@ -109,24 +90,17 @@ func command_expire_c1() {
 	if p == "" {
 		return
 	}
-	if cpu1 == "" {
-		cpu1 = p
-	} else {
-		insertQueue(ready, p)
-	}
+	insertQueue(ready, cpu1)
+	cpu1 = p
 }
 func command_expire_c2() {
 	p := deleteQueue(ready)
 	if p == "" {
 		return
 	}
-	if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
+	insertQueue(ready, cpu2)
+	cpu2 = p
 }
-
 func command_io1_c1() {
 	insertQueue(io1, cpu1)
 	cpu1 = ""
