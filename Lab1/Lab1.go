@@ -111,9 +111,7 @@ func command_expire() {
 		cpu1 = p
 	} else if cpu2 == "" {
 		cpu2 = p
-	} // else {
-	//insertQueue(ready, p)
-	//}
+	}
 }
 
 func command_io1_c1() {
