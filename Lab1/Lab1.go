@@ -106,68 +106,54 @@ func command_expire() {
 	if p == "" {
 		return
 	}
-	insertQueue(ready, p)
+
 	if cpu1 == "" {
 		cpu1 = p
 	} else if cpu2 == "" {
 		cpu2 = p
+	} else {
+		insertQueue(ready, p)
 	}
 }
 
 func command_io1_c1() {
-	if cpu1 != "" {
-		insertQueue(io1, cpu1)
-		cpu1 = ""
-	}
+	insertQueue(io1, cpu1)
+	cpu1 = ""
 	command_expire()
 }
 func command_io1_c2() {
-	if cpu2 != "" {
-		insertQueue(io1, cpu2)
-		cpu2 = ""
-	}
+	insertQueue(io1, cpu2)
+	cpu2 = ""
 	command_expire()
 }
 func command_io2_c1() {
-	if cpu1 != "" {
-		insertQueue(io2, cpu1)
-		cpu1 = ""
-	}
+	insertQueue(io2, cpu1)
+	cpu1 = ""
 	command_expire()
 }
 func command_io2_c2() {
-	if cpu2 != "" {
-		insertQueue(io2, cpu2)
-		cpu2 = ""
-	}
+	insertQueue(io2, cpu2)
+	cpu2 = ""
 	command_expire()
 }
 func command_io3_c1() {
-	if cpu1 != "" {
-		insertQueue(io3, cpu1)
-		cpu1 = ""
-	}
+	insertQueue(io3, cpu1)
+	cpu1 = ""
 	command_expire()
 }
 func command_io3_c2() {
-	if cpu2 != "" {
-		insertQueue(io3, cpu2)
-		cpu2 = ""
-	}
+	insertQueue(io3, cpu2)
+	cpu2 = ""
 	command_expire()
 }
 func command_io4_c1() {
-	if cpu1 != "" {
-		insertQueue(io4, cpu1)
-		cpu1 = ""
-	}
+	insertQueue(io4, cpu1)
+	cpu1 = ""
 	command_expire()
 }
 func command_io4_c2() {
-	if cpu2 != "" {
-		insertQueue(io4, cpu2)
-		cpu2 = ""
-	}
+	insertQueue(io4, cpu2)
+	cpu2 = ""
 	command_expire()
 }
 func command_io1x() {
