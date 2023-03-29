@@ -6,29 +6,35 @@ import (
 	"time"
 )
 
-const bufferCapacity = 10
-
-var buffer = make(chan int, bufferCapacity)
+var (
+	buffer = make(chan int)
+)
 
 func producer(id int) {
 	for {
-		data := rand.Intn(20) + 1
-		fmt.Printf("Producer %d produced %d\n", id, data)
-		buffer <- data
-		time.Sleep(time.Duration(rand.Intn(4)+1) * time.Second)
+
+		data := rand.Intn(20) + 1    // Generate a random integer between 1 and 20
+		duration := rand.Intn(4) + 1 // Generate a random integer between 1 and 4
+		buffer <- data               // Add the value to the buffer
+		fmt.Printf("Producer %d produced data: %d TimeSleep %d\n", id, data, duration)
+
+		// Sleep for a random duration between 1 and 4 seconds
+		time.Sleep(time.Duration(duration) * time.Second)
 	}
 }
 
 func consumer(id int) {
 	for {
-		select {
-		case data := <-buffer:
-			result := fib(data)
-			fmt.Printf("Consumer %d calculated Fibonacci(%d) = %d\n", id, data, result)
-		default:
-			fmt.Printf("Consumer %d found no information\n", id)
+		data, ok := <-buffer         // Add the value to the buffer
+		duration := rand.Intn(4) + 1 // Generate a random integer between 1 and 4
+		if ok {
+			fib := fib(data) // Calculate the Fibonacci
+			fmt.Printf("Consumer %d Fibonacci value for %d: %d TimeSleep %d\n", id, data, fib, duration)
+		} else {
+			fmt.Println("No data in buffer")
 		}
-		time.Sleep(time.Duration(rand.Intn(4)+1) * time.Second)
+		// Sleep for a random duration between 1 and 4 seconds
+		time.Sleep(time.Duration(duration) * time.Second)
 	}
 }
 
@@ -40,11 +46,14 @@ func fib(n int) int {
 }
 
 func main() {
+	// Create the producer threads
 	for i := 1; i <= 2; i++ {
 		go producer(i)
 	}
+	// Create the consumer threads
 	for i := 1; i <= 3; i++ {
 		go consumer(i)
 	}
-	select {}
+
+	fmt.Scanln()
 }
