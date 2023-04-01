@@ -61,6 +61,11 @@ func showProcess() {
 }
 
 func command_new(p string, m1, m2, m3 int) {
+	if isDuplicateName(p) {
+		fmt.Println("Process name already exists.")
+		return
+	}
+	// รหัสโปรเซสเริ่มต้นเท่ากับค่า i ที่ไม่มีชื่อโปรเซสใน process
 	for i := range process {
 		if process[i] == "" {
 			process[i] = p
@@ -83,7 +88,14 @@ func command_new(p string, m1, m2, m3 int) {
 		}
 	}
 }
-
+func isDuplicateName(name string) bool {
+	for _, n := range process {
+		if n == name {
+			return true
+		}
+	}
+	return false
+}
 func command_update() {
 	for i := range process {
 		if process[i] == "" {
@@ -222,16 +234,33 @@ func main() {
 		case "exit":
 			return
 		case "new":
-			m1, _ := strconv.Atoi(commandx[2])
-			m2, _ := strconv.Atoi(commandx[3])
-			m3, _ := strconv.Atoi(commandx[4])
+			if len(commandx) != 5 {
+				fmt.Println("Invalid command. Usage: new <process name> <memory 1> <memory 2> <memory 3>")
+				continue
+			}
+			m1, err1 := strconv.Atoi(commandx[2])
+			m2, err2 := strconv.Atoi(commandx[3])
+			m3, err3 := strconv.Atoi(commandx[4])
+			if err1 != nil || err2 != nil || err3 != nil {
+				fmt.Println("Invalid memory size. Memory size must be an integer.")
+				continue
+			}
 			command_new(commandx[1], m1, m2, m3)
 		case "req":
-			a, _ := strconv.Atoi(commandx[2])
-			b, _ := strconv.Atoi(commandx[3])
-			c, _ := strconv.Atoi(commandx[4])
+			if len(commandx) != 5 {
+				fmt.Println("Invalid command. Usage: req <process name> <memory 1> <memory 2> <memory 3>")
+				continue
+			}
+			a, err1 := strconv.Atoi(commandx[2])
+			b, err2 := strconv.Atoi(commandx[3])
+			c, err3 := strconv.Atoi(commandx[4])
+			if err1 != nil || err2 != nil || err3 != nil {
+				fmt.Println("Invalid memory size. Memory size must be an integer.")
+				continue
+			}
 			command_request(commandx[1], a, b, c)
+		default:
+			fmt.Println("\n-----Invalid command-----")
 		}
-
 	}
 }
