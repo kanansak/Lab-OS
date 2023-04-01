@@ -8,77 +8,98 @@ import (
 )
 
 var (
-	cpu1   string
-	cpu2   string
+	cpu1 string
+	cpu2 string
+
 	ready1 []string
 	ready2 []string
 	ready3 []string
-	io1    []string
-	io2    []string
-	io3    []string
-	io4    []string
+
+	io1 []string
+	io2 []string
+	io3 []string
+	io4 []string
+
+	pty_cpu1 string
+	pty_cpu2 string
+
+	pty_ready1 []string
+	pty_ready2 []string
+	pty_ready3 []string
+
+	pty_io1 []string
+	pty_io2 []string
+	pty_io3 []string
+	pty_io4 []string
+
+	q1 int
+	q2 int
+	q3 int
 )
 
 func initialized() {
 	cpu1 = ""
 	cpu2 = ""
+
 	ready1 = make([]string, 10)
 	ready2 = make([]string, 10)
 	ready3 = make([]string, 10)
+
 	io1 = make([]string, 10)
 	io2 = make([]string, 10)
 	io3 = make([]string, 10)
 	io4 = make([]string, 10)
+
+	pty_cpu1 = ""
+	pty_cpu2 = ""
+
+	pty_ready1 = make([]string, 10)
+	pty_ready2 = make([]string, 10)
+	pty_ready3 = make([]string, 10)
+
+	pty_io1 = make([]string, 10)
+	pty_io2 = make([]string, 10)
+	pty_io3 = make([]string, 10)
+	pty_io4 = make([]string, 10)
+
+	q1 = 0
+	q2 = 0
+	q3 = 0
 }
 
 func showProcess() {
 	fmt.Printf("\n-----------\n")
-	fmt.Printf("CPU1   -> %s\n", cpu1)
-	fmt.Printf("CPU2   -> %s\n", cpu2)
-	fmt.Printf("Ready -> ")
-	for i := range ready {
-		if ready[i] != "" {
-			fmt.Printf("%s ", ready[i])
-		}
+	fmt.Printf("CPU_1 -> %s \n", cpu1)
+	fmt.Printf("CPU_2 -> %s \n", cpu2)
+	fmt.Printf("Ready_1 -> ")
+	for i := range ready1 {
+		fmt.Printf("%s ", ready1[i])
 	}
-	fmt.Printf("\n")
-	if len(io1) > 0 {
-		fmt.Printf("I/O 1 -> ")
-		for i := range io1 {
-			if io1[i] != "" {
-				fmt.Printf("%s ", io1[i])
-			}
-		}
+	fmt.Printf("\nReady_2 -> ")
+	for i := range ready2 {
+		fmt.Printf("%s ", ready2[i])
 	}
-	fmt.Printf("\n")
-	if len(io2) > 0 {
-		fmt.Printf("I/O 2 -> ")
-		for i := range io2 {
-			if io2[i] != "" {
-				fmt.Printf("%s ", io2[i])
-			}
-		}
+	fmt.Printf("\nReady_3 -> ")
+	for i := range ready3 {
+		fmt.Printf("%s ", ready3[i])
 	}
-	fmt.Printf("\n")
-	if len(io3) > 0 {
-		fmt.Printf("I/O 3 -> ")
-		for i := range io3 {
-			if io3[i] != "" {
-				fmt.Printf("%s ", io3[i])
-			}
-		}
+	fmt.Printf("\nI/O_1 -> ")
+	for i := range io1 {
+		fmt.Printf("%s ", io1[i])
 	}
-	fmt.Printf("\n")
-	if len(io4) > 0 {
-		fmt.Printf("I/O 4 -> ")
-		for i := range io4 {
-			if io4[i] != "" {
-				fmt.Printf("%s ", io4[i])
-			}
-		}
+	fmt.Printf("\nI/O_2 -> ")
+	for i := range io2 {
+		fmt.Printf("%s ", io2[i])
 	}
-	fmt.Printf("\n\nCommand > ")
-
+	fmt.Printf("\nI/O_3 -> ")
+	for i := range io3 {
+		fmt.Printf("%s ", io3[i])
+	}
+	fmt.Printf("\nI/O_4 -> ")
+	for i := range io4 {
+		fmt.Printf("%s ", io4[i])
+	}
+	fmt.Printf("\nCommand: ")
 }
 
 func getCommand() string {
@@ -88,153 +109,278 @@ func getCommand() string {
 	return data
 }
 
-func command_new(p string) {
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
-}
-func command_terminate() {
-	if cpu1 != "" {
-		cpu1 = deleteQueue(ready)
-	} else if cpu2 != "" {
-		cpu2 = deleteQueue(ready)
-	}
-}
-
-func command_expire() {
-	p := deleteQueue(ready)
-	if p == "" {
-		return
-	}
-	insertQueue(ready, p)
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} // else {
-	//insertQueue(ready, p)
-	//}
-}
-
-func command_io1() {
-	if cpu1 != "" {
-		insertQueue(io1, cpu1)
-		cpu1 = ""
-	} else if cpu2 != "" {
-		cpu2 = ""
-		insertQueue(io1, cpu2)
-	}
-	command_expire()
-}
-
-func command_io2() {
-	if cpu1 != "" {
-		insertQueue(io2, cpu1)
-		cpu1 = ""
-	} else if cpu2 != "" {
-		insertQueue(io2, cpu2)
-		cpu2 = ""
-	}
-	command_expire()
-}
-func command_io3() {
-	if cpu1 != "" {
-		insertQueue(io3, cpu1)
-		cpu1 = ""
-	} else if cpu2 != "" {
-		insertQueue(io3, cpu2)
-		cpu2 = ""
-	}
-	command_expire()
-}
-
-func command_io4() {
-	if cpu1 != "" {
-		insertQueue(io4, cpu1)
-		cpu1 = ""
-	} else if cpu2 != "" {
-		insertQueue(io4, cpu2)
-		cpu2 = ""
-	}
-	command_expire()
-}
-func command_io1x() {
-	p := deleteQueue(io1)
-	if p == "" {
-		return
-	}
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
-}
-
-func command_io2x() {
-	p := deleteQueue(io2)
-	if p == "" {
-		return
-	}
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
-}
-func command_io3x() {
-	p := deleteQueue(io3)
-	if p == "" {
-		return
-	}
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
-}
-func command_io4x() {
-	p := deleteQueue(io4)
-	if p == "" {
-		return
-	}
-	if cpu1 == "" {
-		cpu1 = p
-	} else if cpu2 == "" {
-		cpu2 = p
-	} else {
-		insertQueue(ready, p)
-	}
-}
-
-func insertQueue(q []string, data string) {
+func insertQueue(q []string, data string, qplt []string, cout_p string) {
 	for i := range q {
 		if q[i] == "" {
 			q[i] = data
+			qplt[i] = cout_p
 			break
 		}
 	}
 }
 
-func deleteQueue(q []string) string {
+func command_new(p string, cout_p string) {
+	if cpu1 == "" {
+		cpu1 = p
+		pty_cpu1 = cout_p
+		if cout_p == "1" {
+			q1++
+		} else if cout_p == "2" {
+			q2++
+		} else if cout_p == "3" {
+			q3++
+		}
+	} else if cpu2 == "" {
+		cpu2 = p
+		pty_cpu2 = cout_p
+		if cout_p == "1" {
+			q1++
+		} else if cout_p == "2" {
+			q2++
+		} else if cout_p == "3" {
+			q3++
+		}
+
+	} else {
+		if cout_p == "1" {
+			insertQueue(ready1, p, pty_ready1, cout_p)
+		} else if cout_p == "2" {
+			insertQueue(ready2, p, pty_ready2, cout_p)
+		} else if cout_p == "3" {
+			insertQueue(ready3, p, pty_ready3, cout_p)
+		}
+	}
+}
+func deleteQueue(q []string, cout_p []string) (string, string) {
 	result := q[0]
+	resultp := cout_p[0]
 	for i := range q {
 		if i == 0 {
 			continue
 		}
 		q[i-1] = q[i]
+		cout_p[i-1] = cout_p[i]
 	}
 	q[9] = ""
-	return result
+	cout_p[9] = ""
+	return result, resultp
+}
+func command_expire(cpuName string) {
+	if cpuName == "cpu1" {
+		cout_p := pty_cpu1
+		CheckExpireCpu1(cout_p)
+	} else if cpuName == "cpu2" {
+		cout_p := pty_cpu2
+		CheckExpireCpu2(cout_p)
+	}
+	newQueue := ""
+	newPiority := ""
+	if q1 < 3 && ready1[0] != "" {
+		newQueue, newPiority = deleteQueue(ready1, pty_ready1)
+	} else if q2 < 3 && ready2[0] != "" {
+		newQueue, newPiority = deleteQueue(ready2, pty_ready2)
+		if q2 < 2 {
+			if q1 == 3 {
+				q1 = 0
+				if q2 == 3 {
+					q2 = 0
+				}
+			} else if q2 == 3 {
+				q2 = 0
+			} else if q3 == 3 {
+				q3 = 0
+			}
+		}
+	} else if q3 < 3 && ready3[0] != "" {
+		newQueue, newPiority = deleteQueue(ready3, pty_ready3)
+		if q1 == 3 {
+			q1 = 0
+			if q2 == 3 {
+				q2 = 0
+			}
+		} else if q2 == 3 {
+			q2 = 0
+		} else if q3 == 3 {
+			q3 = 0
+		}
+	}
+	if newPiority == "1" {
+		q1++
+	} else if newPiority == "2" {
+		q2++
+	} else if newPiority == "3" {
+		q3++
+	}
+	if newQueue == "" {
+		return
+	}
+
+	if cpuName == "cpu1" {
+		cpu1 = newQueue
+		pty_cpu1 = newPiority
+	} else if cpuName == "cpu2" {
+		cpu2 = newQueue
+		pty_cpu2 = newPiority
+	}
+}
+
+func CheckExpireCpu1(inputPiorCpu1 string) {
+	if inputPiorCpu1 == "1" {
+		insertQueue(ready1, cpu1, pty_ready1, pty_cpu1)
+	} else if inputPiorCpu1 == "2" {
+		insertQueue(ready2, cpu1, pty_ready2, pty_cpu1)
+	} else if inputPiorCpu1 == "3" {
+		insertQueue(ready3, cpu1, pty_ready3, pty_cpu1)
+	}
+}
+
+func CheckExpireCpu2(inputPiorCpu2 string) {
+	if inputPiorCpu2 == "1" {
+		insertQueue(ready1, cpu2, pty_ready1, pty_cpu2)
+	} else if inputPiorCpu2 == "2" {
+		insertQueue(ready2, cpu2, pty_ready2, pty_cpu2)
+	} else if inputPiorCpu2 == "3" {
+		insertQueue(ready3, cpu2, pty_ready3, pty_cpu2)
+	}
+}
+func command_ioS(ioName string, cpuName string) {
+	switch ioName {
+	case "1":
+		io_cpu(io1, pty_io1, cpuName)
+	case "2":
+		io_cpu(io2, pty_io2, cpuName)
+	case "3":
+		io_cpu(io3, pty_io3, cpuName)
+	case "4":
+		io_cpu(io4, pty_io4, cpuName)
+	default:
+		return
+	}
+}
+
+func io_cpu(io []string, iop []string, cpu string) {
+	if cpu == "cpu1" {
+		insertQueue(io, cpu1, iop, pty_cpu1)
+		cpu1 = ""
+		pty_cpu1 = ""
+	} else if cpu == "cpu2" {
+		insertQueue(io, cpu2, iop, pty_cpu2)
+		cpu2 = ""
+		pty_cpu2 = ""
+	}
+	command_expire(cpu)
+}
+func command_terminate(cpuName string) {
+	if cpuName == "cpu1" {
+		if q1 < 3 && ready1[0] != "" {
+			cpu1, pty_cpu1 = deleteQueue(ready1, pty_ready1)
+		} else if q2 < 3 && ready2[0] != "" {
+			cpu1, pty_cpu1 = deleteQueue(ready2, pty_ready2)
+		} else if q3 < 3 && ready3[0] != "" {
+			cpu1, pty_cpu1 = deleteQueue(ready3, pty_ready3)
+		} else if ready1[0] == "" && ready2[0] == "" && ready3[0] == "" {
+			cpu1 = ""
+			pty_cpu1 = ""
+		}
+		if q1 == 3 {
+			q1 = 0
+			if q2 == 3 {
+				q2 = 0
+			}
+		} else if q2 == 3 {
+			q2 = 0
+		} else if q3 == 3 {
+			q3 = 0
+		}
+
+		if pty_cpu1 == "1" {
+			q1++
+		} else if pty_cpu1 == "2" {
+			q2++
+		} else if pty_cpu1 == "3" {
+			q3++
+		}
+	} else if cpuName == "cpu2" {
+		if q1 < 3 && ready1[0] != "" {
+			cpu2, pty_cpu2 = deleteQueue(ready1, pty_ready1)
+		} else if q2 < 3 && ready2[0] != "" {
+			cpu2, pty_cpu2 = deleteQueue(ready2, pty_ready2)
+		} else if q3 < 3 && ready3[0] != "" {
+			cpu2, pty_cpu2 = deleteQueue(ready3, pty_ready3)
+		} else if ready1[0] == "" && ready2[0] == "" && ready3[0] == "" {
+			cpu2 = ""
+			pty_cpu2 = ""
+		}
+		if q1 == 3 {
+			q1 = 0
+			if q2 == 3 {
+				q2 = 0
+			}
+		} else if q2 == 3 {
+			q2 = 0
+		} else if q3 == 3 {
+			q3 = 0
+		}
+
+		if pty_cpu2 == "1" {
+			q1++
+		} else if pty_cpu2 == "2" {
+			q2++
+		} else if pty_cpu2 == "3" {
+			q3++
+		}
+	}
+}
+func command_ioSx(ioName string) {
+	fq := ""
+	cout_p := ""
+	switch ioName {
+	case "1":
+		fq, cout_p = deleteQueue(io1, pty_io1)
+	case "2":
+		fq, cout_p = deleteQueue(io2, pty_io2)
+	case "3":
+		fq, cout_p = deleteQueue(io3, pty_io3)
+	case "4":
+		fq, cout_p = deleteQueue(io4, pty_io4)
+	default:
+		return
+	}
+	if fq == "" {
+		return
+	}
+
+	if cpu1 == "" {
+		cpu1 = fq
+		pty_cpu1 = cout_p
+
+		if cout_p == "1" {
+			q1++
+		} else if cout_p == "2" {
+			q2++
+		} else if cout_p == "3" {
+			q3++
+		}
+	} else if cpu2 == "" {
+		cpu2 = fq
+		pty_cpu2 = cout_p
+
+		if cout_p == "1" {
+			q1++
+		} else if cout_p == "2" {
+			q2++
+		} else if cout_p == "3" {
+			q3++
+		}
+	} else {
+		if cout_p == "1" {
+			insertQueue(ready1, fq, pty_ready1, cout_p)
+		} else if cout_p == "2" {
+			insertQueue(ready2, fq, pty_ready2, cout_p)
+		} else if cout_p == "3" {
+			insertQueue(ready3, fq, pty_ready3, cout_p)
+		}
+	}
 }
 
 func main() {
@@ -251,30 +397,28 @@ func main() {
 				if i == 0 {
 					continue
 				}
-				command_new(commandx[i])
+				if i%2 != 0 {
+					command_new(commandx[i], commandx[i+1])
+				}
+
 			}
-		case "terminate":
-			command_terminate()
-		case "expire":
-			command_expire()
-		case "io1":
-			command_io1()
-		case "io2":
-			command_io2()
-		case "io3":
-			command_io3()
-		case "io4":
-			command_io4()
-		case "io1x":
-			command_io1x()
-		case "io2x":
-			command_io2x()
-		case "io3x":
-			command_io3x()
-		case "io4x":
-			command_io4x()
+		case "ter":
+			command_terminate(commandx[1])
+		case "exp":
+			command_expire(commandx[1])
+		case "io":
+			command_ioS(commandx[1], commandx[2])
+		case "iox":
+			command_ioSx(commandx[1])
 		default:
-			fmt.Printf("\nSorry !!! Command Error !!!\n")
+			fmt.Printf("\n-----Invalid command----- \n")
 		}
 	}
+
 }
+
+//new p1 1
+//io 1 cpu1
+//iox 1
+//exp cpu1
+//ter cpu1
