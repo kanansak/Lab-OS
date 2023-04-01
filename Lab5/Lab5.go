@@ -105,6 +105,7 @@ func deallocateMemory(name string) bool {
 				memory[j] = 0
 			}
 			procs = append(procs[:i], procs[i+1:]...)
+			fmt.Println("Memory deallocated:", proc.size, "units")
 			return true
 		}
 	}
@@ -112,8 +113,22 @@ func deallocateMemory(name string) bool {
 }
 
 func showMemoryMap() {
-	fmt.Println("Name\tStart\tSize")
-	for _, proc := range procs {
-		fmt.Printf("%s\t%d\t%d\n", proc.name, proc.offset, proc.size)
+	fmt.Printf("%-10s%-10s%-10s%-10s\n", "Name", "Start", "Size", "Free")
+	for i := 0; i < MEM_SIZE; {
+		if memory[i] == 0 {
+			j := i + 1
+			for ; j < MEM_SIZE && memory[j] == 0; j++ {
+			}
+			fmt.Printf("%-10s%-10d%-10d%-10d\n", "-", i, j-i, j-i)
+			i = j
+		} else {
+			for _, proc := range procs {
+				if proc.offset == i {
+					fmt.Printf("%-10s%-10d%-10d%-10s\n", proc.name, proc.offset, proc.size, "-")
+					i += proc.size
+					break
+				}
+			}
+		}
 	}
 }
