@@ -36,10 +36,10 @@ func getCommand() string {
 }
 
 func showProcess() {
-	fmt.Printf("\n-----------------------------------------------\n")
+	fmt.Printf("\n+-----------------------------------------------+\n")
 	fmt.Printf(" Process |Allocate|  Need |  Max  | Available ")
-	fmt.Printf("\n         | a b c  | a b c | a b c | ")
-	fmt.Printf("\n-----------------------------------------------\n")
+	fmt.Printf("\n         | A B C  | A B C | A B C | ")
+	fmt.Printf("\n+-----------------------------------------------+\n")
 
 	if process[0] == "" {
 		fmt.Printf("    -    | - - -  | - - - | - - - | %d %d %d\n", available[0], available[1], available[2])
