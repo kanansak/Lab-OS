@@ -1,121 +1,237 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"time"
+	"os"
+	"strconv"
+	"strings"
 )
 
-func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	fmt.Printf("\n\n%s took %s\n", name, elapsed)
+var (
+	process   []string
+	allocate  []int
+	need      []int
+	max       []int
+	available []int
+)
+
+func initialized() {
+	process = make([]string, 10)
+	allocate = make([]int, 30)
+	need = make([]int, 30)
+	max = make([]int, 30)
+	available = make([]int, 3)
+
+	for i := range available {
+		available[i] = 10
+	}
 }
-func run() {
-	defer timeTrack(time.Now(), "Banker's Algorithm")
-	var safe, exec bool
-	var count, i, j, r, p int
 
-	//fmt.Printf("Enter the number of processes: ")
-	var running [15]bool
-	fmt.Scanf("%d", &p)
-	for i = 0; i < p; i++ {
-		running[i] = true
-		count++
-	}
+func getCommand() string {
+	reader := bufio.NewReader(os.Stdin)
+	data, _ := reader.ReadString('\n')
+	data = strings.Trim(data, "\n")
+	return data
+}
 
-	//fmt.Printf("Enter the number of resources: ")
-	fmt.Scanf("%d", &r)
+func showProcess() {
+	fmt.Printf("\n-----------------------------------------------\n")
+	fmt.Printf(" Process |Allocate|  Need |  Max  | Available ")
+	fmt.Printf("\n         | a b c  | a b c | a b c | ")
+	fmt.Printf("\n-----------------------------------------------\n")
 
-	var curr [15][15]int     //currently allocated resources
-	var maxclaim [15][15]int //maximum resources
-	var avl [15]int          //available resources
-	var alloc [15]int
-	var maxres [15]int
-
-	//fmt.Printf("Enter the number of resource for instance: ")
-	for i = 0; i < r; i++ {
-		fmt.Scanf("%d", &maxres[i])
-	}
-
-	//fmt.Printf("Enter maximum resource table: \n")
-	for i = 0; i < p; i++ {
-		for j = 0; j < r; j++ {
-			fmt.Scanf("%d", &maxclaim[i][j])
-		}
-	}
-
-	//fmt.Printf("\nEnter allocated resource table: \n")
-	for i = 0; i < p; i++ {
-		for j = 0; j < r; j++ {
-			fmt.Scanf("%d", &curr[i][j])
-		}
-	}
-
-	for i = 0; i < p; i++ {
-		for j = 0; j < r; j++ {
-			alloc[j] += curr[i][j]
-		}
-	}
-
-	for i = 0; i < r; i++ {
-		avl[i] = maxres[i] - alloc[i]
-	}
-
-	fmt.Printf("\nThe instances of the resources:")
-	fmt.Println(maxres[0:r])
-
-	fmt.Printf("\nThe maximum resource table: \n")
-	for i = 0; i < p; i++ {
-		fmt.Println(maxclaim[i][0:j])
-	}
-
-	fmt.Printf("\nThe allocated resource table: \n")
-	for i = 0; i < p; i++ {
-		fmt.Println(curr[i][0:j])
-	}
-
-	fmt.Printf("\nAllocated resources: ")
-	fmt.Println(alloc[0:r])
-
-	fmt.Printf("\nAvailable resources: ")
-	fmt.Println(avl[0:r])
-
-	fmt.Printf("\nRunning Status: ")
-	fmt.Println(running[0:p])
-	//fmt.Printf("%d", p);
-	for count != 0 {
-		for i = 0; i < p; i++ {
-			if running[i] {
-				exec = true
-				for j = 0; j < r; j++ {
-					if maxclaim[i][j]-curr[i][j] > avl[j] {
-						exec = false
-						break
-					}
-				}
-				if exec {
-					fmt.Printf("\nProcess %d is executing", i+1)
-					running[i] = false
-					safe = true
-					for j = 0; j < r; j++ {
-						avl[j] += curr[i][j]
-					}
-					break
+	if process[0] == "" {
+		fmt.Printf("    -    | - - -  | - - - | - - - | %d %d %d\n", available[0], available[1], available[2])
+	} else {
+		for i := range process {
+			if process[i] == "" {
+				continue
+			} else {
+				if i == 0 {
+					fmt.Printf("    %s   | %d %d %d  | %d %d %d | %d %d %d | %d %d %d\n", process[i], allocate[0], allocate[1], allocate[2], need[0], need[1], need[2], max[0], max[1], max[2], available[0], available[1], available[2])
 				} else {
-					safe = false
+					fmt.Printf("    %s   | %d %d %d  | %d %d %d | %d %d %d |\n", process[i], allocate[0+(3*i)], allocate[1+(3*i)], allocate[2+(3*i)], need[0+(3*i)], need[1+(3*i)], need[2+(3*i)], max[0+(3*i)], max[1+(3*i)], max[2+(3*i)])
 				}
 			}
 		}
-		if !safe {
-			fmt.Printf("\nThe processes are in unsafe state (May cause deadlock).")
+	}
+	fmt.Printf("\n")
+	fmt.Printf("\nCommand > ")
+}
+
+func command_new(p string, m1, m2, m3 int) {
+	for i := range process {
+		if process[i] == "" {
+			process[i] = p
+			max[0+(i*3)] = m1
+			max[1+(i*3)] = m2
+			max[2+(i*3)] = m3
+			for i := range process {
+				if process[i] == "" {
+					continue
+				} else {
+					need[0+(i*3)] = max[0+(i*3)] - allocate[0+(i*3)]
+					need[1+(i*3)] = max[1+(i*3)] - allocate[1+(i*3)]
+					need[2+(i*3)] = max[2+(i*3)] - allocate[2+(i*3)]
+					if (need[0+(i*3)] == 0) && (need[1+(i*3)] == 0) && (need[2+(i*3)] == 0) {
+						command_terminate(i)
+					}
+				}
+			}
 			break
-		} else {
-			fmt.Printf("\n\tThe processes are in safe state")
-			fmt.Printf("\n\tAvailable resources:")
-			fmt.Println(avl[0:r])
-			count--
 		}
 	}
 }
+
+func command_update() {
+	for i := range process {
+		if process[i] == "" {
+			continue
+		} else {
+			need[0+(i*3)] = max[0+(i*3)] - allocate[0+(i*3)]
+			need[1+(i*3)] = max[1+(i*3)] - allocate[1+(i*3)]
+			need[2+(i*3)] = max[2+(i*3)] - allocate[2+(i*3)]
+			if (need[0+(i*3)] == 0) && (need[1+(i*3)] == 0) && (need[2+(i*3)] == 0) {
+				command_terminate(i)
+			}
+		}
+	}
+}
+
+func command_request(p string, a, b, c int) {
+	if (available[0]-a > 0) && (available[1]-b > 0) && (available[2]-c > 0) {
+		test1 := available[0] - a
+		test2 := available[1] - b
+		test3 := available[2] - c
+		safe := false
+
+		for i := range process {
+			if process[i] == "" {
+				continue
+			} else if process[i] != p {
+				if (test1 >= need[0+(i*3)]) && (test2 >= need[1+(i*3)]) && (test3 >= need[2+(i*3)]) {
+					safe = true
+					break
+				}
+			} else {
+				if (test1 >= (need[0+(i*3)] - a)) && (test2 >= (need[1+(i*3)] - b)) && (test3 >= (need[2+(i*3)] - c)) {
+					safe = true
+					break
+				}
+			}
+		}
+
+		for i := range process {
+			if process[i] == p {
+				if (a <= need[0+(i*3)]) && (b <= need[1+(i*3)]) && (c <= need[2+(i*3)]) && safe == true {
+					allocate[0+(i*3)] += a
+					allocate[1+(i*3)] += b
+					allocate[2+(i*3)] += c
+					available[0] -= a
+					available[1] -= b
+					available[2] -= c
+					fmt.Printf("\n--------------------Safe!--------------------\n")
+					safe = false
+				} else {
+					fmt.Printf("\n--------------------Not Safe!--------------------\n")
+				}
+			} else {
+				continue
+			}
+		}
+		command_update()
+	} else if (available[0]-a == 0) && (available[1]-b == 0) && (available[2]-c == 0) {
+		test1 := available[0] - a
+		test2 := available[1] - b
+		test3 := available[2] - c
+		safe := false
+
+		for i := range process {
+			if process[i] == "" {
+				continue
+			} else if process[i] != p {
+				if (test1 >= need[0+(i*3)]) && (test2 >= need[1+(i*3)]) && (test3 >= need[2+(i*3)]) {
+					safe = true
+					break
+				}
+			} else {
+				if (test1 >= (need[0+(i*3)] - a)) && (test2 >= (need[1+(i*3)] - b)) && (test3 >= (need[2+(i*3)] - c)) {
+					safe = true
+					break
+				}
+			}
+		}
+
+		for i := range process {
+			if process[i] == p {
+				if (available[0]-need[0+(i*3)] == 0) && (available[1]-need[1+(i*3)] == 0) && (available[2]-need[2+(i*3)] == 0) && safe == true {
+					allocate[0+(i*3)] += a
+					allocate[1+(i*3)] += b
+					allocate[2+(i*3)] += c
+					available[0] -= a
+					available[1] -= b
+					available[2] -= c
+					fmt.Printf("\n--------------------Safe!--------------------\n")
+					safe = false
+				} else {
+					fmt.Printf("\n--------------------Not Safe!--------------------\n")
+				}
+			} else {
+				continue
+			}
+		}
+		command_update()
+	} else {
+		fmt.Printf("\n--------------------Not Safe!--------------------\n")
+	}
+}
+
+func command_terminate(p int) {
+	available[0] += allocate[0+(p*3)]
+	available[1] += allocate[1+(p*3)]
+	available[2] += allocate[2+(p*3)]
+	for i := range process {
+		if process[i] == "" {
+			break
+		}
+		if process[i] != process[p] {
+			continue
+		}
+		process[i] = process[i+1]
+		need[0+(i*3)] = need[0+(i*3)+3]
+		need[1+(i*3)] = need[1+(i*3)+3]
+		need[2+(i*3)] = need[2+(i*3)+3]
+		max[0+(i*3)] = max[0+(i*3)+3]
+		max[1+(i*3)] = max[1+(i*3)+3]
+		max[2+(i*3)] = max[2+(i*3)+3]
+		allocate[0+(i*3)] = allocate[0+(i*3)+3]
+		allocate[1+(i*3)] = allocate[1+(i*3)+3]
+		allocate[2+(i*3)] = allocate[2+(i*3)+3]
+		p = i + 1
+	}
+}
+
 func main() {
-	run()
+	initialized()
+	for {
+		showProcess()
+		command := getCommand()
+		commandx := strings.Split(command, " ")
+		switch commandx[0] {
+		case "exit":
+			return
+		case "new":
+			m1, _ := strconv.Atoi(commandx[2])
+			m2, _ := strconv.Atoi(commandx[3])
+			m3, _ := strconv.Atoi(commandx[4])
+			command_new(commandx[1], m1, m2, m3)
+		case "req":
+			a, _ := strconv.Atoi(commandx[2])
+			b, _ := strconv.Atoi(commandx[3])
+			c, _ := strconv.Atoi(commandx[4])
+			command_request(commandx[1], a, b, c)
+		}
+
+	}
 }
