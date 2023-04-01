@@ -418,7 +418,13 @@ func main() {
 }
 
 //new p1 1
+
 //io 1 cpu1
+
 //iox 1
+
 //exp cpu1
+//exp cpu2
+
 //ter cpu1
+//ter cpu2
