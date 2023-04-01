@@ -27,6 +27,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		showMemoryMap()
+		fmt.Println("Free space:", freeSpace())
 		fmt.Print("Command: ")
 		scanner.Scan()
 		line := scanner.Text()
@@ -55,7 +56,7 @@ func main() {
 			} else {
 				fmt.Println("Not enough memory")
 			}
-		case "terminate":
+		case "ter":
 			if len(fields) < 2 {
 				fmt.Println("Invalid command")
 				continue
@@ -66,14 +67,34 @@ func main() {
 			} else {
 				fmt.Println("Process not found")
 			}
-		/*case "show":
-		showMemoryMap()*/
 		case "exit":
 			return
 		default:
 			fmt.Println("Invalid command")
+
+		}
+
+	}
+}
+func freeSpace() int {
+	free := 0
+	for i := 0; i < MEM_SIZE; {
+		if memory[i] == 0 {
+			j := i + 1
+			for ; j < MEM_SIZE && memory[j] == 0; j++ {
+			}
+			free += j - i
+			i = j
+		} else {
+			for _, proc := range procs {
+				if proc.offset == i {
+					i += proc.size
+					break
+				}
+			}
 		}
 	}
+	return free
 }
 
 func allocateMemory(name string, size int) bool {
