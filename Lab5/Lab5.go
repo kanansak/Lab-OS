@@ -38,44 +38,46 @@ func main() {
 		switch fields[0] {
 		case "new":
 			if len(fields) < 3 {
-				fmt.Println("Invalid command")
+				fmt.Println("-----Invalid command-----")
 				continue
 			}
 			name := fields[1]
 			size, err := strconv.Atoi(fields[2])
 			if err != nil {
-				fmt.Println("Invalid size")
+				fmt.Println("-----Invalid size-----")
 				continue
 			}
 			if size > MEM_SIZE {
-				fmt.Println("Not enough memory")
+				fmt.Println("-----Not enough memory-----")
 				continue
 			}
 			if allocateMemory(name, size) {
-				fmt.Println("Process created")
+				fmt.Println("-----Process created-----")
 			} else {
-				fmt.Println("Not enough memory")
+				fmt.Println("-----Not enough memory-----")
 			}
 		case "ter":
 			if len(fields) < 2 {
-				fmt.Println("Invalid command")
+				fmt.Println("-----Invalid command-----")
 				continue
 			}
 			name := fields[1]
 			if deallocateMemory(name) {
-				fmt.Println("Process terminated")
+				fmt.Println("-----Process terminated-----")
 			} else {
-				fmt.Println("Process not found")
+				fmt.Println("-----Process not found-----")
 			}
 		case "exit":
 			return
 		default:
-			fmt.Println("Invalid command")
+			fmt.Println("-----Invalid command-----")
 
 		}
 
 	}
 }
+
+// เพื่อคำนวณหาพื้นที่ว่างในหน่วยความจำ
 func freeSpace() int {
 	free := 0
 	for i := 0; i < MEM_SIZE; {
@@ -97,6 +99,7 @@ func freeSpace() int {
 	return free
 }
 
+// เพื่อจองหน่วยความจำสำหรับโปรเซสใหม่ Allocation Strategy แบบ first-fit
 func allocateMemory(name string, size int) bool {
 	for i := 0; i < MEM_SIZE; i++ {
 		if memory[i] == 0 {
@@ -119,6 +122,7 @@ func allocateMemory(name string, size int) bool {
 	return false
 }
 
+// เพื่อคืนพื้นที่หน่วยความจำที่ใช้งานไม่จำเป็นกลับไป
 func deallocateMemory(name string) bool {
 	for i, proc := range procs {
 		if proc.name == name {
@@ -133,6 +137,7 @@ func deallocateMemory(name string) bool {
 	return false
 }
 
+// เพื่อแสดงการใช้งานหน่วยความจำ
 func showMemoryMap() {
 	fmt.Printf("%-10s%-10s%-10s%-10s\n", "Name", "Start", "Size", "Free")
 	for i := 0; i < MEM_SIZE; {
