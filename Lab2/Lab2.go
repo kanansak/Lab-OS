@@ -21,7 +21,7 @@ var (
 	io4 []string
 
 	pty_cpu1 string
-	pty_cpu2 string
+	//pty_cpu1 string
 
 	pty_ready1 []string
 	pty_ready2 []string
@@ -51,7 +51,7 @@ func initialized() {
 	io4 = make([]string, 10)
 
 	pty_cpu1 = ""
-	pty_cpu2 = ""
+	pty_cpu1 = ""
 
 	pty_ready1 = make([]string, 10)
 	pty_ready2 = make([]string, 10)
@@ -71,11 +71,11 @@ func showProcess() {
 	fmt.Printf("\n-----------\n")
 	fmt.Printf("CPU_1 -> %s \n", cpu1)
 	fmt.Printf("CPU_2 -> %s \n", cpu2)
-	fmt.Printf("Ready_1 -> ")
+	fmt.Printf("Ready_1 [%d]-> ", q1)
 	for i := range ready1 {
 		fmt.Printf("%s ", ready1[i])
 	}
-	fmt.Printf("\nReady_2 -> ")
+	fmt.Printf("\nReady_2 [%d]-> ", q2)
 	for i := range ready2 {
 		fmt.Printf("%s ", ready2[i])
 	}
@@ -132,7 +132,7 @@ func command_new(p string, cout_p string) {
 		}
 	} else if cpu2 == "" {
 		cpu2 = p
-		pty_cpu2 = cout_p
+		pty_cpu1 = cout_p
 		if cout_p == "1" {
 			q1++
 		} else if cout_p == "2" {
@@ -170,7 +170,7 @@ func command_expire(cpuName string) {
 		cout_p := pty_cpu1
 		CheckExpireCpu1(cout_p)
 	} else if cpuName == "cpu2" {
-		cout_p := pty_cpu2
+		cout_p := pty_cpu1
 		CheckExpireCpu2(cout_p)
 	}
 	newQueue := ""
@@ -220,7 +220,7 @@ func command_expire(cpuName string) {
 		pty_cpu1 = newPiority
 	} else if cpuName == "cpu2" {
 		cpu2 = newQueue
-		pty_cpu2 = newPiority
+		pty_cpu1 = newPiority
 	}
 }
 
@@ -236,11 +236,11 @@ func CheckExpireCpu1(inputPiorCpu1 string) {
 
 func CheckExpireCpu2(inputPiorCpu2 string) {
 	if inputPiorCpu2 == "1" {
-		insertQueue(ready1, cpu2, pty_ready1, pty_cpu2)
+		insertQueue(ready1, cpu2, pty_ready1, pty_cpu1)
 	} else if inputPiorCpu2 == "2" {
-		insertQueue(ready2, cpu2, pty_ready2, pty_cpu2)
+		insertQueue(ready2, cpu2, pty_ready2, pty_cpu1)
 	} else if inputPiorCpu2 == "3" {
-		insertQueue(ready3, cpu2, pty_ready3, pty_cpu2)
+		insertQueue(ready3, cpu2, pty_ready3, pty_cpu1)
 	}
 }
 func command_ioS(ioName string, cpuName string) {
@@ -264,9 +264,9 @@ func io_cpu(io []string, iop []string, cpu string) {
 		cpu1 = ""
 		pty_cpu1 = ""
 	} else if cpu == "cpu2" {
-		insertQueue(io, cpu2, iop, pty_cpu2)
+		insertQueue(io, cpu2, iop, pty_cpu1)
 		cpu2 = ""
-		pty_cpu2 = ""
+		pty_cpu1 = ""
 	}
 	command_expire(cpu)
 }
@@ -302,14 +302,14 @@ func command_terminate(cpuName string) {
 		}
 	} else if cpuName == "cpu2" {
 		if q1 < 3 && ready1[0] != "" {
-			cpu2, pty_cpu2 = deleteQueue(ready1, pty_ready1)
+			cpu2, pty_cpu1 = deleteQueue(ready1, pty_ready1)
 		} else if q2 < 3 && ready2[0] != "" {
-			cpu2, pty_cpu2 = deleteQueue(ready2, pty_ready2)
+			cpu2, pty_cpu1 = deleteQueue(ready2, pty_ready2)
 		} else if q3 < 3 && ready3[0] != "" {
-			cpu2, pty_cpu2 = deleteQueue(ready3, pty_ready3)
+			cpu2, pty_cpu1 = deleteQueue(ready3, pty_ready3)
 		} else if ready1[0] == "" && ready2[0] == "" && ready3[0] == "" {
 			cpu2 = ""
-			pty_cpu2 = ""
+			pty_cpu1 = ""
 		}
 		if q1 == 3 {
 			q1 = 0
@@ -322,11 +322,11 @@ func command_terminate(cpuName string) {
 			q3 = 0
 		}
 
-		if pty_cpu2 == "1" {
+		if pty_cpu1 == "1" {
 			q1++
-		} else if pty_cpu2 == "2" {
+		} else if pty_cpu1 == "2" {
 			q2++
-		} else if pty_cpu2 == "3" {
+		} else if pty_cpu1 == "3" {
 			q3++
 		}
 	}
@@ -363,7 +363,7 @@ func command_ioSx(ioName string) {
 		}
 	} else if cpu2 == "" {
 		cpu2 = fq
-		pty_cpu2 = cout_p
+		pty_cpu1 = cout_p
 
 		if cout_p == "1" {
 			q1++
@@ -411,7 +411,7 @@ func main() {
 		case "iox":
 			command_ioSx(commandx[1])
 		default:
-			fmt.Printf("\n-----Invalid command----- \n")
+			fmt.Printf("\nInput Error \n")
 		}
 	}
 
@@ -428,3 +428,9 @@ func main() {
 
 //ter cpu1
 //ter cpu2
+
+//new p1 1 p2 1 p3 1 p4 2 p5 3
+//exp cpu1
+//exp cpu2
+
+//exp cpu1
