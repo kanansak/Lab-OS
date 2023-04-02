@@ -17,6 +17,7 @@ var (
 	io4   []string
 )
 
+// เริ่มต้นตัวแปรโกลบอลเป็นค่าเริ่มต้น
 func initialized() {
 	cpu1 = ""
 	cpu2 = ""
