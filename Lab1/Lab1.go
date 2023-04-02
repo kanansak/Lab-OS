@@ -58,6 +58,7 @@ func showProcess() {
 	fmt.Printf("\n\nCommand > ")
 }
 
+// ใช้สำหรับรับค่าข้อมูลที่ผู้ใช้กรอกเข้ามาผ่านทาง command line interface (CLI)
 func getCommand() string {
 	reader := bufio.NewReader(os.Stdin)
 	data, _ := reader.ReadString('\n')
@@ -65,6 +66,7 @@ func getCommand() string {
 	return data
 }
 
+// new <process_name>: creates a new process with the given name and adds it to the system.
 func command_new(p string) {
 	if cpu1 == "" {
 		cpu1 = p
@@ -74,6 +76,8 @@ func command_new(p string) {
 		insertQueue(ready, p)
 	}
 }
+
+// terminate <cpu_name>: terminates the process running on the specified CPU core (cpu1 or cpu2).
 func command_terminate(namecpu string) {
 	if namecpu == "cpu1" {
 		if cpu1 != "" {
@@ -92,7 +96,7 @@ func command_terminate(namecpu string) {
 		cpu2 = deleteQueue(ready)
 	}
 }*/
-
+//expire cpu1 or expire cpu2: moves the process running on the specified CPU core to the end of the ready queue.
 func command_expire_cpu1() {
 	p := deleteQueue(ready)
 	if p == "" {
@@ -109,6 +113,8 @@ func command_expire_cpu2() {
 	insertQueue(ready, cpu2)
 	cpu2 = p
 }
+
+// io1 cpu1 or io1 cpu2: moves the process running on the specified CPU core to the I/O queue 1.
 func command_io1_cpu1() {
 	insertQueue(io1, cpu1)
 	cpu1 = ""
@@ -119,6 +125,8 @@ func command_io1_cpu2() {
 	cpu2 = ""
 	command_expire_cpu2()
 }
+
+// io2 cpu1 or io2 cpu2: moves the process running on the specified CPU core to the I/O queue 2.
 func command_io2_cpu1() {
 	insertQueue(io2, cpu1)
 	cpu1 = ""
@@ -129,6 +137,8 @@ func command_io2_cpu2() {
 	cpu2 = ""
 	command_expire_cpu2()
 }
+
+// io3 cpu1 or io3 cpu2: moves the process running on the specified CPU core to the I/O queue 3.
 func command_io3_cpu1() {
 	insertQueue(io3, cpu1)
 	cpu1 = ""
@@ -139,6 +149,8 @@ func command_io3_cpu2() {
 	cpu2 = ""
 	command_expire_cpu2()
 }
+
+// io4 cpu1 or io4 cpu2: moves the process running on the specified CPU core to the I/O queue 4.
 func command_io4_cpu1() {
 	insertQueue(io4, cpu1)
 	cpu1 = ""
@@ -149,6 +161,8 @@ func command_io4_cpu2() {
 	cpu2 = ""
 	command_expire_cpu2()
 }
+
+// io1x, io2x, io3x, io4x: moves the first process from the specified I/O queue to the ready queue if there is an available CPU core.
 func command_io1x() {
 	p := deleteQueue(io1)
 	if p == "" {
@@ -162,7 +176,6 @@ func command_io1x() {
 		insertQueue(ready, p)
 	}
 }
-
 func command_io2x() {
 	p := deleteQueue(io2)
 	if p == "" {
@@ -203,6 +216,7 @@ func command_io4x() {
 	}
 }
 
+// เป็นฟังก์ชันที่ใช้สำหรับการเพิ่มข้อมูลเข้าไปในคิว (Queue)
 func insertQueue(q []string, data string) {
 	for i := range q {
 		if q[i] == "" {
@@ -212,6 +226,7 @@ func insertQueue(q []string, data string) {
 	}
 }
 
+// ใช้สำหรับลบข้อมูลจากตัวแปร
 func deleteQueue(q []string) string {
 	result := q[0]
 	for i := range q {
