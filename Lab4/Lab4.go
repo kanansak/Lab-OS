@@ -235,25 +235,27 @@ func command_terminate(p int) {
 }
 
 func main() {
-	initialized()
+	initialized() // เรียกใช้ฟังก์ชัน initialized() เพื่อกำหนดค่าเริ่มต้น
 	for {
-		showProcess()
-		command := getCommand()
-		commandx := strings.Split(command, " ")
-		switch commandx[0] {
-		case "exit":
+		showProcess()                           // เรียกใช้ฟังก์ชัน showProcess() เพื่อแสดงสถานะของกระบวนการ
+		command := getCommand()                 // เรียกใช้ฟังก์ชัน getCommand() เพื่อรับคำสั่งจากผู้ใช้
+		commandx := strings.Split(command, " ") // แยกคำสั่งออกเป็นส่วนย่อย ๆ ด้วยช่องว่างเป็นตัวแยก
+		switch commandx[0] {                    // ตรวจสอบคำสั่งที่ผู้ใช้ป้อนเข้ามา
+		case "exit": // ถ้าเป็น "exit" ให้จบโปรแกรม
 			return
 		case "new":
+			// ถ้าเป็น "new" ให้ตรวจสอบจำนวนอินพุตที่ถูกส่งเข้ามาว่าตรงตามรูปแบบหรือไม่
 			if len(commandx) != 5 {
 				fmt.Println("Invalid command. Usage: new <process name> <memory 1> <memory 2> <memory 3>")
-				continue
+				continue // ถ้าไม่ตรงตามรูปแบบให้แสดงข้อความแล้ววนกลับไปรอรับคำสั่งใหม่
 			}
 			m1, err1 := strconv.Atoi(commandx[2])
 			m2, err2 := strconv.Atoi(commandx[3])
 			m3, err3 := strconv.Atoi(commandx[4])
+			// ตรวจสอบว่าขนาดหน่วยความจำที่รับเข้ามาเป็นตัวเลขหรือไม่
 			if err1 != nil || err2 != nil || err3 != nil {
 				fmt.Println("Invalid memory size. Memory size must be an integer.")
-				continue
+				continue // ถ้าไม่ใช่ให้แสดงข้อความแล้ววนกลับไปรอรับคำสั่งใหม่
 			}
 			command_new(commandx[1], m1, m2, m3)
 		case "req":
