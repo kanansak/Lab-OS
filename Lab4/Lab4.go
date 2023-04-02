@@ -28,6 +28,7 @@ func initialized() {
 	}
 }
 
+// รับข้อมูลจากผู้ใช้ เช่น การรับคำสั่ง หรือข้อความจากผู้ใช้
 func getCommand() string {
 	reader := bufio.NewReader(os.Stdin)
 	data, _ := reader.ReadString('\n')
@@ -60,6 +61,7 @@ func showProcess() {
 	fmt.Printf("\nCommand > ")
 }
 
+// ฟังก์ชั่นนี้รับพารามิเตอร์ 4 ตัว โดยมีพารามิเตอร์แรกเป็น string และพารามิเตอร์ที่เหลือเป็น int
 func command_new(p string, m1, m2, m3 int) {
 	if isDuplicateName(p) {
 		fmt.Println("Process name already exists.")
@@ -88,6 +90,10 @@ func command_new(p string, m1, m2, m3 int) {
 		}
 	}
 }
+
+// ฟังก์ชั่นนี้รับพารามิเตอร์เป็น string และเป็นฟังก์ชันที่ใช้ตรวจสอบว่าชื่อที่รับเข้ามาซ้ำกับชื่อใดๆ
+// ที่มีอยู่แล้วหรือไม่ โดยจะ return ค่าเป็น true หากชื่อซ้ำกับชื่อใดๆ ที่มีอยู่แล้ว และ return
+// ค่าเป็น false หากชื่อไม่ซ้ำกับชื่อใดๆ ที่มีอยู่แล้ว
 func isDuplicateName(name string) bool {
 	for _, n := range process {
 		if n == name {
@@ -96,6 +102,8 @@ func isDuplicateName(name string) bool {
 	}
 	return false
 }
+
+// ใช้สำหรับอัพเดท command หรือเปลี่ยนแปลงค่าของ command ที่มีอยู่
 func command_update() {
 	for i := range process {
 		if process[i] == "" {
@@ -111,6 +119,7 @@ func command_update() {
 	}
 }
 
+// รับพารามิเตอร์ 4 ตัว ได้แก่ p ที่เป็น string และ a, b, c ที่เป็น integer
 func command_request(p string, a, b, c int) {
 	if (available[0]-a > 0) && (available[1]-b > 0) && (available[2]-c > 0) {
 		test1 := available[0] - a
@@ -199,6 +208,7 @@ func command_request(p string, a, b, c int) {
 	}
 }
 
+// รับพารามิเตอร์ p ที่เป็น integer
 func command_terminate(p int) {
 	available[0] += allocate[0+(p*3)]
 	available[1] += allocate[1+(p*3)]
